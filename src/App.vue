@@ -17,22 +17,19 @@ onMounted(async () => {
     $b24 = await initializeB24Frame()
 
     // Инициализация B24Helper перед использованием
-    await initB24Helper(
-		$b24,
-		[
-			LoadDataType.Profile,
-			LoadDataType.App,
-			LoadDataType.Currency,
-			LoadDataType.AppOptions,
-			LoadDataType.UserOptions,
-		]
-	)
+    await initB24Helper($b24, [
+      LoadDataType.Profile,
+      LoadDataType.App,
+      LoadDataType.Currency,
+      LoadDataType.AppOptions,
+      LoadDataType.UserOptions,
+    ]).then( async () => {
+      // Используем хук useTasks и передаем объект Bitrix24
+      const { loadTasks } = useTasks($b24)
 
-    // Используем хук useTasks и передаем объект Bitrix24
-    const { loadTasks } = useTasks($b24)
-
-    // Загружаем задачи
-    await loadTasks()
+      // Загружаем задачи
+      await loadTasks()
+    })
 
     // Сохраняем задачи в локальное состояние
     // tasks.value = loadedTasks.value
