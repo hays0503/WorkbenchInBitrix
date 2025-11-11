@@ -43,7 +43,7 @@ onUnmounted(() => {
   </header>
 
   <main>
-    <span></span>
+    <span>profileInfo:{{profileInfo}}</span>
   </main>
 </template>
 
