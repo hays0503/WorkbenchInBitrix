@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { initializeB24Frame, B24Frame } from '@bitrix24/b24jssdk'
+import { initializeB24Frame, B24Frame, useB24Helper } from '@bitrix24/b24jssdk'
 import { LoggerBrowser, LoggerType } from '@bitrix24/b24jssdk'
 import { useTasks } from './tools/useTasks' // Импортируем хук useTasks
 
@@ -14,6 +14,9 @@ onMounted(async () => {
   try {
     // Инициализация Bitrix24 Frame
     $b24 = await initializeB24Frame()
+
+    // Инициализация B24Helper перед использованием
+    await useB24Helper().initB24Helper($b24)
 
     // Используем хук useTasks и передаем объект Bitrix24
     const { loadTasks } = useTasks($b24)
