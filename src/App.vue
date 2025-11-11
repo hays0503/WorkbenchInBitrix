@@ -8,7 +8,9 @@ const logger = LoggerBrowser.build('MyApp', import.meta.env?.DEV === true)
 
 let $b24: B24Frame
 const tasks = ref([])
-const { initB24Helper } = useB24Helper()
+
+// Деструктурируем метод из useB24Helper
+const { initB24Helper, getB24Helper } = useB24Helper()
 
 onMounted(async () => {
   console.log('Initializing Bitrix24 Frame...')
@@ -16,7 +18,7 @@ onMounted(async () => {
     // Инициализация Bitrix24 Frame
     $b24 = await initializeB24Frame()
 
-    // Инициализация B24Helper перед использованием
+    // Инициализация B24Helper, ждем завершения
     await initB24Helper($b24, [
       LoadDataType.Profile,
       LoadDataType.App,
@@ -24,8 +26,17 @@ onMounted(async () => {
       LoadDataType.AppOptions,
       LoadDataType.UserOptions,
     ])
+    console.log('B24Helper initialized')
 
-    // После того как initB24Helper завершил инициализацию, можно использовать функции SDK
+    // Теперь можно безопасно использовать getB24Helper
+    const profileInfo = getB24Helper().profileInfo
+    if (profileInfo) {
+      console.log('Profile info:', profileInfo)
+    } else {
+      console.error('Profile information is not available!')
+    }
+
+    // Используем хук useTasks и передаем объект Bitrix24
     const { loadTasks } = useTasks($b24)
 
     // Загружаем задачи
