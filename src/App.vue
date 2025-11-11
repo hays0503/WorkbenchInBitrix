@@ -43,7 +43,13 @@ onUnmounted(() => {
   </header>
 
   <main>
-    <span>profileInfo:{{profileInfo}}</span>
+    <div v-if="profileInfo">
+      <h2>Информация о профиле:</h2>
+      <pre>{{ profileInfo }}</pre>
+    </div>
+    <div v-else>
+      <p>Загрузка данных профиля...</p>
+    </div>
   </main>
 </template>
 
