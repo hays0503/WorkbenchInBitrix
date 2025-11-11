@@ -15,36 +15,9 @@ onMounted(async () => {
     $b24 = await initializeB24Frame()
 
     // Инициализация B24Helper, ждем завершения
-    await initB24Helper($b24, [
-      LoadDataType.Profile,
-      LoadDataType.App,
-      LoadDataType.Currency,
-      LoadDataType.AppOptions,
-      LoadDataType.UserOptions,
-    ]).then((b24Helper)=>{
+    await initB24Helper($b24).then((b24Helper)=>{
       console.log('Profile info:', b24Helper.profileInfo)
     })
-    // console.log('B24Helper initialized')
-
-    // // Устанавливаем флаг, что B24Helper инициализирован
-    // isInitB24Helper.value = true
-
-    // // Теперь можно безопасно использовать getB24Helper()
-    // const profileInfo = getB24Helper().profileInfo
-    // if (profileInfo) {
-    //   console.log('Profile info:', profileInfo)
-    // } else {
-    //   console.error('Profile information is not available!')
-    // }
-
-    // // Используем хук useTasks и передаем объект Bitrix24
-    // const { loadTasks } = useTasks($b24)
-
-    // // Загружаем задачи
-    // await loadTasks()
-
-    // logger.enable(LoggerType.log)
-    // console.log('Bitrix24 Frame initialized')
   } catch (error) {
     console.error('Error initializing Bitrix24:', error)
   }
