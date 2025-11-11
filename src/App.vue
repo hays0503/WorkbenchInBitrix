@@ -1,47 +1,52 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+import { onMounted, onUnmounted, ref } from 'vue'
+import { initializeB24Frame, B24Frame } from '@bitrix24/b24jssdk'
+import { useB24Helper, LoadDataType } from '@bitrix24/b24jssdk'
+import { LoggerBrowser, LoggerType } from '@bitrix24/b24jssdk'
+import type { TypeUser } from '@bitrix24/b24jssdk'
+
+const { initB24Helper, getB24Helper } = useB24Helper()
+let $b24: B24Frame
+
+
+// Указываем правильный тип для переменной profileInfo
+const profileInfo = ref<TypeUser | null>(null)
+
+const logger = LoggerBrowser.build(
+  'MyApp',
+  import.meta.env?.DEV === true, // or process.env?.NODE_ENV === 'development'
+)
+
+onMounted(async () => {
+  console.log('Initializing Bitrix24 Frame...')
+  try {
+    $b24 = await initializeB24Frame()
+    await initB24Helper($b24, [LoadDataType.Profile])
+    logger.enable(LoggerType.log)
+    profileInfo.value = getB24Helper().profileInfo.data
+    logger.info(profileInfo.value)
+    console.log('Bitrix24 Frame initialized')
+  } catch (error) {
+    console.error(error)
+  }
+  console.log('App mounted')
+})
+
+onUnmounted(() => {
+  $b24?.destroy()
+})
 </script>
 
 <template>
   <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
+    Тестовое приложение Bitrix24 Frame SDK
   </header>
 
   <main>
-    <TheWelcome />
+    <span></span>
   </main>
 </template>
 
 <style scoped>
-header {
-  line-height: 1.5;
-}
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-}
 </style>

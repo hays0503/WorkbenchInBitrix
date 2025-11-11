@@ -16,6 +16,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@bitrix24/b24jssdk": "^0.5.1",
     "vue": "^3.5.22"
   },
   "devDependencies": {
