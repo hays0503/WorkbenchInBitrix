@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import { initializeB24Frame, B24Frame, useB24Helper, LoadDataType } from '@bitrix24/b24jssdk'
 import { LoggerBrowser, LoggerType } from '@bitrix24/b24jssdk'
 import { useTasks } from './tools/useTasks' // Импортируем хук useTasks
@@ -9,8 +9,11 @@ const logger = LoggerBrowser.build('MyApp', import.meta.env?.DEV === true)
 let $b24: B24Frame
 const tasks = ref([])
 
-// Деструктурируем метод из useB24Helper
+// Деструктурируем методы из useB24Helper
 const { initB24Helper, getB24Helper } = useB24Helper()
+
+// Стейт инициализации B24Helper
+const isInitB24Helper = ref(false)
 
 onMounted(async () => {
   console.log('Initializing Bitrix24 Frame...')
@@ -28,7 +31,10 @@ onMounted(async () => {
     ])
     console.log('B24Helper initialized')
 
-    // Теперь можно безопасно использовать getB24Helper
+    // Устанавливаем флаг, что B24Helper инициализирован
+    isInitB24Helper.value = true
+
+    // Теперь можно безопасно использовать getB24Helper()
     const profileInfo = getB24Helper().profileInfo
     if (profileInfo) {
       console.log('Profile info:', profileInfo)
