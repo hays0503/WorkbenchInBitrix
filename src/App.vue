@@ -1,58 +1,62 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { initializeB24Frame, B24Frame } from '@bitrix24/b24jssdk'
-import { useB24Helper, LoadDataType } from '@bitrix24/b24jssdk'
 import { LoggerBrowser, LoggerType } from '@bitrix24/b24jssdk'
-import type { TypeUser } from '@bitrix24/b24jssdk'
+import { useTasks } from './tools/useTasks' // Импортируем хук useTasks
 
-const { initB24Helper, getB24Helper } = useB24Helper()
+const logger = LoggerBrowser.build('MyApp', import.meta.env?.DEV === true)
+
 let $b24: B24Frame
-
-
-// Указываем правильный тип для переменной profileInfo
-const profileInfo = ref<TypeUser | null>(null)
-
-const logger = LoggerBrowser.build(
-  'MyApp',
-  import.meta.env?.DEV === true, // or process.env?.NODE_ENV === 'development'
-)
+const tasks = ref([])
 
 onMounted(async () => {
   console.log('Initializing Bitrix24 Frame...')
   try {
+    // Инициализация Bitrix24 Frame
     $b24 = await initializeB24Frame()
-    await initB24Helper($b24, [LoadDataType.Profile])
+
+    // Используем хук useTasks и передаем объект Bitrix24
+    const { loadTasks } = useTasks($b24)
+
+    // Загружаем задачи
+    await loadTasks()
+
+    // Сохраняем задачи в локальное состояние
+    // tasks.value = loadedTasks.value
+
     logger.enable(LoggerType.log)
-    profileInfo.value = getB24Helper().profileInfo.data
-    logger.info(profileInfo.value)
     console.log('Bitrix24 Frame initialized')
   } catch (error) {
-    console.error(error)
+    console.error('Error initializing Bitrix24:', error)
   }
   console.log('App mounted')
-})
-
-onUnmounted(() => {
-  $b24?.destroy()
 })
 </script>
 
 <template>
-  <header>
-    Тестовое приложение Bitrix24 Frame SDK
-  </header>
+  <header>Список моих задач</header>
 
   <main>
-    <div v-if="profileInfo">
-      <h2>Информация о профиле:</h2>
-      <pre>{{ profileInfo }}</pre>
+    <div v-if="tasks.length > 0">
+      <h2>Мои задачи:</h2>
+      <ul>
+        <!-- <li v-for="task in tasks" :key="task.id">
+          <p>
+            <strong>{{ task.title }}</strong>
+          </p>
+          <p>{{ task.description }}</p>
+          <p>
+            <small>{{ task.createdDate }}</small>
+          </p>
+        </li> -->
+      </ul>
     </div>
     <div v-else>
-      <p>Загрузка данных профиля...</p>
+      <p>Задачи не найдены.</p>
     </div>
   </main>
 </template>
 
 <style scoped>
-
+/* Добавьте стили по вашему желанию */
 </style>
