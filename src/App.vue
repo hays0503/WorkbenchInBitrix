@@ -1,19 +1,12 @@
 <script setup lang="ts">
-import { onMounted, ref, computed } from 'vue'
+import { onMounted } from 'vue'
 import { initializeB24Frame, B24Frame, useB24Helper, LoadDataType } from '@bitrix24/b24jssdk'
-import { LoggerBrowser, LoggerType } from '@bitrix24/b24jssdk'
-import { useTasks } from './tools/useTasks' // Импортируем хук useTasks
 
-const logger = LoggerBrowser.build('MyApp', import.meta.env?.DEV === true)
 
 let $b24: B24Frame
-const tasks = ref([])
-
 // Деструктурируем методы из useB24Helper
-const { initB24Helper, getB24Helper } = useB24Helper()
+const { initB24Helper} = useB24Helper()
 
-// Стейт инициализации B24Helper
-const isInitB24Helper = ref(false)
 
 onMounted(async () => {
   console.log('Initializing Bitrix24 Frame...')
@@ -28,28 +21,30 @@ onMounted(async () => {
       LoadDataType.Currency,
       LoadDataType.AppOptions,
       LoadDataType.UserOptions,
-    ])
-    console.log('B24Helper initialized')
+    ]).then((b24Helper)=>{
+      console.log('Profile info:', b24Helper.profileInfo)
+    })
+    // console.log('B24Helper initialized')
 
-    // Устанавливаем флаг, что B24Helper инициализирован
-    isInitB24Helper.value = true
+    // // Устанавливаем флаг, что B24Helper инициализирован
+    // isInitB24Helper.value = true
 
-    // Теперь можно безопасно использовать getB24Helper()
-    const profileInfo = getB24Helper().profileInfo
-    if (profileInfo) {
-      console.log('Profile info:', profileInfo)
-    } else {
-      console.error('Profile information is not available!')
-    }
+    // // Теперь можно безопасно использовать getB24Helper()
+    // const profileInfo = getB24Helper().profileInfo
+    // if (profileInfo) {
+    //   console.log('Profile info:', profileInfo)
+    // } else {
+    //   console.error('Profile information is not available!')
+    // }
 
-    // Используем хук useTasks и передаем объект Bitrix24
-    const { loadTasks } = useTasks($b24)
+    // // Используем хук useTasks и передаем объект Bitrix24
+    // const { loadTasks } = useTasks($b24)
 
-    // Загружаем задачи
-    await loadTasks()
+    // // Загружаем задачи
+    // await loadTasks()
 
-    logger.enable(LoggerType.log)
-    console.log('Bitrix24 Frame initialized')
+    // logger.enable(LoggerType.log)
+    // console.log('Bitrix24 Frame initialized')
   } catch (error) {
     console.error('Error initializing Bitrix24:', error)
   }
@@ -61,19 +56,19 @@ onMounted(async () => {
   <header>Список моих задач</header>
 
   <main>
-    <div v-if="tasks.length > 0">
+    <!--<div v-if="tasks.length > 0">
       <h2>Мои задачи:</h2>
-      <!-- <ul>
+       <ul>
         <li v-for="task in tasks" :key="task.id">
           <p><strong>{{ task.title }}</strong></p>
           <p>{{ task.description }}</p>
           <p><small>{{ task.createdDate }}</small></p>
         </li>
-      </ul> -->
+      </ul>
     </div>
     <div v-else>
       <p>Задачи не найдены.</p>
-    </div>
+    </div> -->
   </main>
 </template>
 
