@@ -23,16 +23,13 @@ onMounted(async () => {
       LoadDataType.Currency,
       LoadDataType.AppOptions,
       LoadDataType.UserOptions,
-    ]).then( async () => {
-      // Используем хук useTasks и передаем объект Bitrix24
-      const { loadTasks } = useTasks($b24)
+    ])
 
-      // Загружаем задачи
-      await loadTasks()
-    })
+    // После того как initB24Helper завершил инициализацию, можно использовать функции SDK
+    const { loadTasks } = useTasks($b24)
 
-    // Сохраняем задачи в локальное состояние
-    // tasks.value = loadedTasks.value
+    // Загружаем задачи
+    await loadTasks()
 
     logger.enable(LoggerType.log)
     console.log('Bitrix24 Frame initialized')
@@ -49,17 +46,13 @@ onMounted(async () => {
   <main>
     <div v-if="tasks.length > 0">
       <h2>Мои задачи:</h2>
-      <ul>
-        <!-- <li v-for="task in tasks" :key="task.id">
-          <p>
-            <strong>{{ task.title }}</strong>
-          </p>
+      <!-- <ul>
+        <li v-for="task in tasks" :key="task.id">
+          <p><strong>{{ task.title }}</strong></p>
           <p>{{ task.description }}</p>
-          <p>
-            <small>{{ task.createdDate }}</small>
-          </p>
-        </li> -->
-      </ul>
+          <p><small>{{ task.createdDate }}</small></p>
+        </li>
+      </ul> -->
     </div>
     <div v-else>
       <p>Задачи не найдены.</p>
